@@ -47,7 +47,7 @@
             totalPayment = P * n; // общая сумма выплат
             const overpayment = totalPayment - S; // переплата
 
-            resultText = `Ежемесячный аннуитетный платеж: ${P.toFixed(2)} руб.<br>Общая сумма выплат: ${totalPayment.toFixed(2)} руб.<br>Переплата по кредиту: ${overpayment.toFixed(2)} руб.`;
+            resultText = `<strong>Ежемесячный аннуитетный платеж:</strong> ${P.toFixed(2)} руб.<br><strong>Общая сумма выплат:</strong> ${totalPayment.toFixed(2)} руб.<br><strong>Переплата по кредиту:</strong> ${overpayment.toFixed(2)} руб.`;
         } else if (paymentType === 'differentiated') {
             const b = S / n; // основная часть
             let paymentDetails = '';
@@ -58,11 +58,11 @@
                 const totalMonthPayment = b + p; // общий платеж за месяц
                 totalPayment += totalMonthPayment;
 
-                paymentDetails += `Месяц ${month}: ${totalMonthPayment.toFixed(2)} руб.<br>`;
+                paymentDetails += `<tr><td>${month}</td><td>${totalMonthPayment.toFixed(2)}</td><td>${p.toFixed(2)}</td><td>${b.toFixed(2)}</td><td>${remainingDebt.toFixed(2)}</td></tr>`;
             }
 
             const overpayment = totalPayment - S; // переплата
-            resultText = `Общая сумма выплат по дифференцированному методу: ${totalPayment.toFixed(2)} руб.<br>Переплата по кредиту: ${overpayment.toFixed(2)} руб.<br>${paymentDetails}`;
+            resultText = `<strong>Общая сумма выплат по дифференцированному методу:</strong> ${totalPayment.toFixed(2)} руб.<br><strong>Переплата по кредиту:</strong> ${overpayment.toFixed(2)} руб.`;
         }
 
         document.getElementById('result').innerHTML = resultText;
