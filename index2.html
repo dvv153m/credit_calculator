@@ -1,1 +1,74 @@
 
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Кредитный калькулятор</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+</head>
+<body class="bg-gradient-to-r from-purple-400 via-blue-500 to-green-500 flex justify-center items-center h-screen">
+
+<div class="max-w-md w-full bg-white p-8 rounded-lg shadow-lg border-2 border-green-500">
+    <h1 class="text-4xl font-extrabold text-center text-gray-900 mb-6">Кредитный калькулятор</h1>
+
+    <label for="amount" class="block text-gray-700 font-medium">Сумма кредита (руб.):</label>
+    <input type="number" id="amount" required class="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:border-blue-500 mb-4" placeholder="Введите сумму кредита">
+
+    <label for="rate" class="block text-gray-700 font-medium">Годовая процентная ставка (%):</label>
+    <input type="number" id="rate" required class="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:border-blue-500 mb-4" placeholder="Введите процентную ставку">
+
+    <label for="months" class="block text-gray-700 font-medium">Срок кредита (месяцы):</label>
+    <input type="number" id="months" required class="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:border-blue-500 mb-4" placeholder="Введите срок кредита">
+
+    <label for="paymentType" class="block text-gray-700 font-medium">Тип платежа:</label>
+    <select id="paymentType" class="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:border-blue-500 mb-4">
+        <option value="annuity">Аннуитетный</option>
+        <option value="differentiated">Дифференцированный</option>
+    </select>
+
+    <button onclick="calculatePayment()" class="w-full bg-blue-500 text-white rounded-md py-2 px-4 hover:bg-blue-600 focus:outline-none">Рассчитать платеж</button>
+
+    <h2 id="result" class="text-lg font-semibold text-center mt-4"></h2>
+</div>
+
+<script>
+    function calculatePayment() {
+        const S = parseFloat(document.getElementById('amount').value);
+        const annualRate = parseFloat(document.getElementById('rate').value);
+        const n = parseInt(document.getElementById('months').value);
+        const paymentType = document.getElementById('paymentType').value;
+
+        let resultText = '';
+        let totalPayment = 0;
+
+        if (paymentType === 'annuity') {
+            const i = annualRate / 100 / 12; // ежемесячная процентная ставка
+            const P = S * (i * Math.pow(1 + i, n)) / (Math.pow(1 + i, n) - 1); // аннуитетный платеж
+            totalPayment = P * n; // общая сумма выплат
+            const overpayment = totalPayment - S; // переплата
+
+            resultText = `<strong>Ежемесячный аннуитетный платеж:</strong> ${P.toFixed(2)} руб.<br><strong>Общая сумма выплат:</strong> ${totalPayment.toFixed(2)} руб.<br><strong>Переплата по кредиту:</strong> ${overpayment.toFixed(2)} руб.`;
+        } else if (paymentType === 'differentiated') {
+            const b = S / n; // основная часть
+            let paymentDetails = '';
+
+            for (let month = 1; month <= n; month++) {
+                const remainingDebt = S - (b * (month - 1)); // остаток долга
+                const p = remainingDebt * (annualRate / 100 / 12); // процентная часть
+                const totalMonthPayment = b + p; // общий платеж за месяц
+                totalPayment += totalMonthPayment;
+
+                paymentDetails += `<tr><td>${month}</td><td>${totalMonthPayment.toFixed(2)}</td><td>${p.toFixed(2)}</td><td>${b.toFixed(2)}</td><td>${remainingDebt.toFixed(2)}</td></tr>`;
+            }
+
+            const overpayment = totalPayment - S; // переплата
+            resultText = `<strong>Общая сумма выплат по дифференцированному методу:</strong> ${totalPayment.toFixed(2)} руб.<br><strong>Переплата по кредиту:</strong> ${overpayment.toFixed(2)} руб.`;
+        }
+
+        document.getElementById('result').innerHTML = resultText;
+    }
+</script>
+
+</body>
+</html>
